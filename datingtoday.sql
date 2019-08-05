@@ -11,7 +11,7 @@
  Target Server Version : 50718
  File Encoding         : 65001
 
- Date: 27/07/2019 10:52:39
+ Date: 05/08/2019 17:30:41
 */
 
 SET NAMES utf8mb4;
@@ -72,7 +72,9 @@ CREATE TABLE `message` (
   `read` tinyint(1) DEFAULT NULL COMMENT '1 已读 0 未读',
   PRIMARY KEY (`id`),
   KEY `FK_fk_letterrecieveid` (`to_uid`),
-  KEY `FK_fk_lettersendid` (`from_uid`)
+  KEY `FK_fk_lettersendid` (`from_uid`),
+  CONSTRAINT `message_ibfk_1` FOREIGN KEY (`from_uid`) REFERENCES `user_info` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `message_ibfk_2` FOREIGN KEY (`to_uid`) REFERENCES `user_info` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=100539 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -106,15 +108,17 @@ DROP TABLE IF EXISTS `user_auth`;
 CREATE TABLE `user_auth` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
-  `openid` varchar(128) DEFAULT NULL,
+  `open_id` varchar(128) DEFAULT NULL,
   `session_key` varchar(255) DEFAULT NULL,
   `token` varchar(255) DEFAULT NULL,
   `expired_time` timestamp NULL DEFAULT NULL COMMENT 'auth_code过期时间',
   `login_type` varchar(16) DEFAULT NULL COMMENT '登录方式，目前有phone,third_party',
   `login_time` timestamp NULL DEFAULT NULL COMMENT '最后登录时间',
   `create_time` timestamp NULL DEFAULT NULL COMMENT '注册时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `user_auth_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user_info` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for user_info
@@ -134,11 +138,10 @@ CREATE TABLE `user_info` (
   `education` varchar(2) DEFAULT NULL COMMENT '0 未知 1 高中及以下 2中专 3大学 4研究生 5 博士',
   `salary` int(2) DEFAULT NULL COMMENT '1 3000以下，2 3000-5000，3 5000-8000，4 8000-10000，5，10000-20000，6 20000以上',
   `authority` int(2) DEFAULT '1' COMMENT '个人资料可见性（0：所有用户不可见，1：所有用户可见，2：仅我关注的人可见）',
-  `status` int(2) DEFAULT NULL COMMENT '账户状态（0：锁定，1：激活，2：未激活）',
   `create_time` timestamp NULL DEFAULT NULL,
-  `update_time` timestamp NULL DEFAULT NULL,
+  `update_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=100784 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=100785 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for user_label
