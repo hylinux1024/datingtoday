@@ -31,7 +31,7 @@ class UserAuth(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user_info.id'))
-    user_basic = db.relationship(UserInfo, backref=db.backref('user_auth', lazy=True))
+    user_basic = db.relationship(UserInfo, backref=db.backref('user_auth', lazy=True, uselist=False))
 
     open_id = db.Column(db.String(128))
     session_key = db.Column(db.String(255))

@@ -1,11 +1,12 @@
 from flask import Flask
 
-from api import auth, config
+from api import auth, user, config
 from models import db
 
 app = Flask(__name__)
 
 app.register_blueprint(auth.bp)
+app.register_blueprint(user.bp)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["SQLALCHEMY_DATABASE_URI"] = config['DATABASE']['uri']
