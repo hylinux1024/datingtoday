@@ -15,7 +15,9 @@ class TestUser(unittest.TestCase):
     def test_hotlist(self):
         import math
         nonce = math.floor(random.uniform(100000, 1000000))
-        params = {'phone': '18922986865', 'appkey': '432ABZ', 'timestamp': datetime.now().timestamp(),
+        params = {'phone': '18922986865', 'userId': '100784', 'appkey': '432ABZ',
+                  'token': '575f680ddbd0d494a1b5fad8497293d2',
+                  'timestamp': datetime.now().timestamp(),
                   'nonce': nonce}
         sign = signature(params)
         params['sign'] = sign
@@ -31,7 +33,7 @@ class TestUser(unittest.TestCase):
     def test_update(self):
         import math
         nonce = math.floor(random.uniform(100000, 1000000))
-        params = {'token': 'efd53df18549627ad277e1fa7332b9ee', 'userId': '100784', 'appkey': '432ABZ',
+        params = {'token': '575f680ddbd0d494a1b5fad8497293d2', 'userId': '100784', 'appkey': '432ABZ',
                   'timestamp': datetime.now().timestamp(),
                   'nonce': nonce}
         sign = signature(params)

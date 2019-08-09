@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -11,15 +12,31 @@ class UserInfo(db.Model):
     email = db.Column(db.String(64))  # email
     nickname = db.Column(db.String(64))
     phone = db.Column(db.String(16))
-    gender = db.Column(db.String(2))  # 1男2女
-    birthday = db.Column(db.Date)
+    gender = db.Column(db.Integer)  # 1男2女0未知
+    birthday = db.Column(db.DateTime)
     avatar = db.Column(db.String(128))
-    emotion = db.Column(db.String(2))  # 情感状态 0 单身 1 已婚 2 离异 3保密
+    emotion = db.Column(db.Integer)  # 情感状态 0 单身 1 已婚 2 离异 3保密
     height = db.Column(db.Integer)
-    sexual = db.Column(db.String(2))  # 性取向 1 男 2女 3都有
+    sexual = db.Column(db.String(2))  # 性取向 1 男 2女 0未知
     education = db.Column(db.String(64))  # 0 未知; 1 高中及以下; 2中专; 3大学; 4硕士; 5 博士
     salary = db.Column(db.Integer)  # 1: 3000以下；2: 3000-5000；3: 5000-8000; 4: 8000-10000; 5: 10000-20000; 6: 20000以上
     authority = db.Column(db.Integer)  # 个人资料可见性（0：所有用户不可见，1：所有用户可见，2：仅我关注的人可见）
+
+    def format_birthday(self):
+        if isinstance(self.birthday, datetime):
+            return self.birthday.strftime('%Y-%m-%d')
+        return None
+
+    @staticmethod
+    def check_token(uid, token):
+        if not token or not uid:
+            return False
+        user = UserInfo.query.filter_by(id=uid).first()
+        if not user:
+            return False
+        if not user.user_auth:
+            return False
+        return user.user_auth.token == token
 
     def __repr__(self):
         return f'{self.__class__.__name__}({self.id}, {self.nickname})'
@@ -31,7 +48,7 @@ class UserAuth(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user_info.id'))
-    user_basic = db.relationship(UserInfo, backref=db.backref('user_auth', lazy=True, uselist=False))
+    user_basic = db.relationship(UserInfo, backref=db.backref('user_auth', uselist=False))
 
     open_id = db.Column(db.String(128))
     session_key = db.Column(db.String(255))
@@ -60,10 +77,10 @@ class Message(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     from_uid = db.Column(db.Integer, db.ForeignKey('user_info.id'))
-    from_user = db.relationship(UserInfo, backref=db.backref('from_message', lazy=True), foreign_keys=from_uid)
+    from_user = db.relationship(UserInfo, backref=db.backref('from_message'), foreign_keys=from_uid)
 
     to_uid = db.Column(db.Integer, db.ForeignKey('user_info.id'))
-    to_user = db.relationship(UserInfo, backref=db.backref('to_message', lazy=True), foreign_keys=to_uid)
+    to_user = db.relationship(UserInfo, backref=db.backref('to_message'), foreign_keys=to_uid)
 
     msg_type = db.Column(db.String(16))  # text,audio,image,video
     audio = db.Column(db.String(128))

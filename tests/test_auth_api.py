@@ -21,8 +21,11 @@ class TestAuth(unittest.TestCase):
         params['sign'] = sign
 
         respdata = self.app.post("/api/auth/sendsms", data=params)
+        self.assertEqual(200, respdata.status_code)
+
         resp = respdata.json
-        self.assertEqual(resp['code'], 0, respdata.data)
+        self.assertEqual(0, resp['code'], respdata.data)
+        self.assertIsNotNone(resp['data'], respdata.data)
 
     def test_login(self):
         import math
@@ -32,8 +35,11 @@ class TestAuth(unittest.TestCase):
         sign = signature(params)
         params['sign'] = sign
         respdata = self.app.post("/api/auth/login", data=params)
+        self.assertEqual(200, respdata.status_code)
+
         resp = respdata.json
-        self.assertEqual(resp['code'], 0, respdata.data)
+        self.assertEqual(0, resp['code'], respdata.data)
+        self.assertIsNotNone(resp['data'], respdata.data)
 
 
 if __name__ == '__main__':

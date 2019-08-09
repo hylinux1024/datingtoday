@@ -1,6 +1,7 @@
 import hashlib
 import configparser
 from flask import request, jsonify
+from models import UserInfo
 import os
 
 config = configparser.ConfigParser()
@@ -35,25 +36,51 @@ def _get_app_secret(appkey: str):
     return ''
 
 
-def validsign(func):
+def validsign(require_token=False, require_sign=True):
     """
-    验证签名
-    :param func:
+    验证签名,token信息
+    :param require_token: 是否验证token
+    :param require_sign: 是否验证签名
     :return:
     """
 
-    def decorator():
-        params = request.form
-        appkey = params.get('appkey')
-        sign = params.get('sign')
-        csign = signature(params)
-        if not appkey:
-            return make_response_error(300, 'appkey is none.')
-        if csign != sign:
-            return make_response_error(500, 'signature is error.')
-        return func()
+    def decorator(func):
+
+        def wrapper():
+
+            params = _get_request_params()
+            if require_sign:
+                appkey = params.get('appkey')
+                sign = params.get('sign')
+                csign = signature(params)
+                if not appkey:
+                    return make_response_error(300, 'appkey is none.')
+                if csign != sign:
+                    return make_response_error(500, 'signature is error.')
+            if require_token:
+                token = params.get('token')
+                uid = params.get('userId')
+                if not UserInfo.check_token(uid, token):
+                    return make_response_error(504, 'no operation permission')
+            return func()
+
+        return wrapper
 
     return decorator
+
+
+def _get_request_param(key):
+    value = request.form.get(key)
+    if not value:
+        value = request.args.get(key)
+    return value
+
+
+def _get_request_params():
+    params = request.form
+    if not params:
+        params = request.args
+    return params
 
 
 def make_response_ok(data=None):

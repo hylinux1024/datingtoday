@@ -11,7 +11,7 @@
  Target Server Version : 50718
  File Encoding         : 65001
 
- Date: 05/08/2019 17:30:41
+ Date: 09/08/2019 11:52:01
 */
 
 SET NAMES utf8mb4;
@@ -129,13 +129,13 @@ CREATE TABLE `user_info` (
   `email` varchar(64) DEFAULT NULL,
   `nickname` varchar(64) DEFAULT NULL,
   `phone` varchar(16) DEFAULT NULL,
-  `gender` int(2) unsigned zerofill DEFAULT NULL COMMENT '1男2女0未知',
-  `birthday` date DEFAULT NULL,
+  `gender` int(2) DEFAULT '0' COMMENT '1男2女0未知',
+  `birthday` datetime DEFAULT NULL,
   `avatar` varchar(128) DEFAULT NULL,
-  `emotion` varchar(2) DEFAULT NULL COMMENT '0 单身 1 已婚 2 离异 3保密',
+  `emotion` tinyint(2) DEFAULT '0' COMMENT '0 单身 1 已婚 2 离异 3保密',
   `height` int(3) DEFAULT NULL,
-  `sexual` int(2) DEFAULT NULL COMMENT '性取向 1 男 2女 3 两者都有',
-  `education` varchar(2) DEFAULT NULL COMMENT '0 未知 1 高中及以下 2中专 3大学 4研究生 5 博士',
+  `sexual` int(2) DEFAULT '0' COMMENT '性取向 1 男 2女 0未知',
+  `education` tinyint(2) DEFAULT '0' COMMENT '0 未知 1 高中及以下 2中专 3大学 4研究生 5 博士',
   `salary` int(2) DEFAULT NULL COMMENT '1 3000以下，2 3000-5000，3 5000-8000，4 8000-10000，5，10000-20000，6 20000以上',
   `authority` int(2) DEFAULT '1' COMMENT '个人资料可见性（0：所有用户不可见，1：所有用户可见，2：仅我关注的人可见）',
   `create_time` timestamp NULL DEFAULT NULL,
@@ -196,15 +196,5 @@ CREATE TABLE `visitor` (
   KEY `FK_fk_uvuserid` (`user_id`),
   KEY `FK_fk_uvvid` (`visitor_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=244 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Triggers structure for table user_info
--- ----------------------------
-DROP TRIGGER IF EXISTS `trigger_seletterxual`;
-delimiter ;;
-CREATE TRIGGER `trigger_seletterxual` AFTER UPDATE ON `user_info` FOR EACH ROW update user_pick set sex=new.sexual where id=new.id
-;
-;;
-delimiter ;
 
 SET FOREIGN_KEY_CHECKS = 1;

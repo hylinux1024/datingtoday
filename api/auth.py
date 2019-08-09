@@ -17,7 +17,7 @@ r = redis.Redis(connection_pool=redis_pool)
 
 
 @bp.route("/login", methods=['POST'], endpoint='login')
-@validsign
+@validsign(require_token=False, require_sign=True)
 def login():
     phone = request.form.get('phone')
     code = request.form.get('code')
@@ -54,7 +54,7 @@ def register_by_phone(phone):
 
 
 @bp.route("/sendsms", methods=['POST'], endpoint="sendsms")
-@validsign
+@validsign(require_token=False, require_sign=True)
 def send_sms():
     phone = request.form.get('phone')
     m = re.match(pattern_phone, phone)
