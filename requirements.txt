@@ -3,7 +3,7 @@ Flask==1.1.1
 flask-marshmallow==0.10.1
 Flask-SQLAlchemy==2.4.0
 itsdangerous==1.1.0
-Jinja2==2.10.1
+Jinja2==2.11.3
 MarkupSafe==1.1.1
 marshmallow==2.19.5
 marshmallow-sqlalchemy==0.17.0
